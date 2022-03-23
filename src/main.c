@@ -80,6 +80,7 @@ int main(void)
         delta = elapsedTime - lastElapsed;
 
         RenderScene(&rdr, elapsedTime);
+        //TEST COMMENT
 
         gfx_SwapDraw();
 
