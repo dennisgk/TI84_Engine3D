@@ -40,7 +40,7 @@ void InitializeMeshCube(Mesh* cube){
 
 }
 
-void InitializeDirectionalLight(Light* light, Vec3d* direction){
+void InitializeDirectionalLight(Light* light, Vec3d* direction, float power){
     light->type = LT_DIRECTIONAL;
 
     Vec3d light_direction = {0};
@@ -52,9 +52,19 @@ void InitializeDirectionalLight(Light* light, Vec3d* direction){
 
     LSC_DirectionalLight* dirLight = malloc(sizeof(LSC_DirectionalLight));
     dirLight->direction = light_direction;
+    dirLight->power = power;
 
     light->info = (void*)dirLight;
 
+}
+
+void InitializeAmbientLight(Light* light, float power){
+    light->type = LT_AMBIENT;
+
+    LSC_AmbientLight* ambLight = malloc(sizeof(LSC_AmbientLight));
+    ambLight->power = power;
+
+    light->info = (void*)ambLight;
 }
 
 void FreeLight(Light* light){

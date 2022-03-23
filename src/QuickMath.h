@@ -14,6 +14,9 @@ static float negPI = -3.141592;
 static float halfPI = 1.57079633;
 static float negHalfPI = -1.57079633;
 
+float absf_s(float value);
+float negf_s(float f);
+
 float cosf(float rad);
 float sinf(float rad);
 float cosf_s(float rad);

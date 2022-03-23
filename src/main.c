@@ -50,22 +50,30 @@ int main(void)
     memset(mCube, 0, sizeof(Mesh));
     InitializeMeshCube(mCube);
     mCube->position.z = 8;
-    mCube->rotation.w = 1;
 
     //CREATE AND INTIIALIZE A DIRECTIONAL LIGHT THAT IS POINTING DIRECTLY FORWARD
     Light* dirLight = malloc(sizeof(Light));
     memset(dirLight, 0, sizeof(Light));
-    Vec3d direction = {0.0f, 0.0f, -1.0f};
-    InitializeDirectionalLight(dirLight, &direction);
+    Vec3d direction = {0.0f, 0.0f, 1.0f};
+    InitializeDirectionalLight(dirLight, &direction, 1.0f);
+
+    //CREATE AND INITIALIZE AN AMBIENT LIGHT WITH POWER
+    Light* ambientLight = malloc(sizeof(Light));
+    memset(ambientLight, 0, sizeof(Light));
+    InitializeAmbientLight(ambientLight, 0.2f);
 
     //ADD OBJECT AND LIGHT TO SCENE
     AddObjectToScene(&rdr, mCube);
+    AddLightToScene(&rdr, ambientLight);
     AddLightToScene(&rdr, dirLight);
 
     //DELTA STUFF FOR RENDER LOOP
     float lastElapsed = 0.0f;
     float delta = 0.0f;
     float elapsedTime = 0.0f;
+
+    bool positionUpdated = false;
+    bool rotationUpdated = false;
 
     while(1){
         kb_Scan();
@@ -79,12 +87,55 @@ int main(void)
         elapsedTime = getElapsed();
         delta = elapsedTime - lastElapsed;
 
-        RenderScene(&rdr, elapsedTime);
-        //TEST COMMENT
+        if(kb_Data[7] & kb_Right){
+            Quaternion rightRotationQuat = {0};
+            QuaternionAboutAxis(1.0f * delta, &upDir, &rightRotationQuat);
+            Quaternion intermediate = rdr.vCameraRotation;
+            QuaternionMultiply(&intermediate, &rightRotationQuat, &rdr.vCameraRotation);
+            rotationUpdated = true;
+        }
+        if(kb_Data[7] & kb_Left){
+            Quaternion rightRotationQuat = {0};
+            QuaternionAboutAxis(-1.0f * delta, &upDir, &rightRotationQuat);
+            Quaternion intermediate = rdr.vCameraRotation;
+            QuaternionMultiply(&intermediate, &rightRotationQuat, &rdr.vCameraRotation);
+            rotationUpdated = true;
+        }
+        if(kb_Data[7] & kb_Up){
+            Vec3d intermediate = {0};
+            RotateVectorByQuaternion(&forwardDir, &rdr.vCameraRotation, &intermediate);
+            MultiplyVectorByScalar(&intermediate, 3.0f * delta, &intermediate);
+            AddVectors(&rdr.vCameraPosition, &intermediate, &rdr.vCameraPosition);
+            positionUpdated = true;
+        }
+        if(kb_Data[7] & kb_Down){
+            
+            Vec3d intermediate = {0};
+            RotateVectorByQuaternion(&forwardDir, &rdr.vCameraRotation, &intermediate);
+            MultiplyVectorByScalar(&intermediate, -3.0f * delta, &intermediate);
+            AddVectors(&rdr.vCameraPosition, &intermediate, &rdr.vCameraPosition);
+            positionUpdated = true;
+        }
+
+        if(positionUpdated){
+            UpdateRendererPosition(&rdr);
+        }
+        if(rotationUpdated){
+            UpdateRendererRotation(&rdr);
+        }
+
+        Quaternion cubeRotQuat = {0};
+        QuaternionAboutAxis(-1.0f * delta, &upDir, &cubeRotQuat);
+        Quaternion cubeIntermediate = mCube->rotation;
+        QuaternionMultiply(&cubeIntermediate, &cubeRotQuat, &mCube->rotation);
+
+        RenderScene(&rdr);
 
         gfx_SwapDraw();
 
         lastElapsed = elapsedTime;
+        positionUpdated = false;
+        rotationUpdated = false;
     }
 
     gfx_End();

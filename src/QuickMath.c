@@ -1,5 +1,32 @@
 #include "QuickMath.h"
 
+float absf_s(float f) {
+    if (sizeof(float) == sizeof(uint32_t)) {
+        union {
+            float f;
+            uint32_t i;
+        } u;
+        u.f = f;
+        u.i &= 0x7fffffff;
+        return u.f;
+    }
+    return (f < 0.0f) ? f * -1.0f : f;
+}
+
+float negf_s(float f){
+    if (sizeof(float) == sizeof(uint32_t)) {
+        union {
+            float f;
+            uint32_t i;
+        } u;
+        u.f = f;
+        u.i ^= 0x80000000;
+        return u.f;
+    }
+    return f * -1.0f;
+}
+
+
 float cosf(float rad){
     
     if(rad < negHalfPI){
@@ -203,7 +230,7 @@ int partitionTri (Triangle** arr, int low, int high)
     {
         // If current element is smaller than the pivot
         float z2 = (arr[j]->p[0].z + arr[j]->p[1].z + arr[j]->p[2].z) / 3.0f;
-        if (z2 < z1)
+        if (z2 > z1)
         {
             i++; // increment index of smaller element
             swapTri(&arr[i], &arr[j]);

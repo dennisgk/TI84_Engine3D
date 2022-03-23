@@ -29,7 +29,7 @@ typedef struct{
     float m[4][4];
 } Mat4x4;
 
-typedef enum { LT_DIRECTIONAL } LightType;
+typedef enum { LT_DIRECTIONAL, LT_AMBIENT } LightType;
 
 typedef struct{
     LightType type;
@@ -38,10 +38,16 @@ typedef struct{
 
 typedef struct{
     Vec3d direction;
+    float power;
 } LSC_DirectionalLight;
 
+typedef struct{
+    float power;
+} LSC_AmbientLight;
+
 void InitializeMeshCube(Mesh* cube);
-void InitializeDirectionalLight(Light* light, Vec3d* direction);
+void InitializeDirectionalLight(Light* light, Vec3d* direction, float power);
+void InitializeAmbientLight(Light* light, float power);
 void FreeLight(Light* light);
 
 

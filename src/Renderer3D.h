@@ -11,7 +11,6 @@ static Vec3d backwardDir = {0.0f, 0.0f, -1.0f};
 static Vec3d rightDir = {1.0f, 0.0f, 0.0f};
 static Vec3d leftDir = {-1.0f, 0.0f, 0.0f};
 
-
 typedef struct{
     Mesh** sceneObjects;
     Light** sceneLights;
@@ -23,10 +22,10 @@ typedef struct{
 
     Vec3d vCameraPosition;
     Quaternion vCameraRotation;
-    
+    //DO NOT MESS WITH
     Vec3d vCameraForward;
-    Vec3d vCameraUp;
-    Vec3d vCameraRight;
+    Vec3d vCameraPositionInverse;
+    Quaternion vCameraRotationInverse;
 
     Mat4x4 projectionMatrix;
 } Renderer3D;
@@ -34,6 +33,9 @@ typedef struct{
 void IncreaseRdrSceneObjectCapacity(Renderer3D* renderer, int increase);
 void IncreaseRdrSceneLightCapacity(Renderer3D* renderer, int increase);
 void SetRdrDrawableTrianglesCapacity(Renderer3D* renderer, int capacity);
+
+void UpdateRendererPosition(Renderer3D* renderer);
+void UpdateRendererRotation(Renderer3D* renderer);
 
 void AddMeshAndTrisToBuffer(Renderer3D* renderer, Mesh* obj);
 void AddObjectToScene(Renderer3D* renderer, Mesh* obj);
@@ -49,7 +51,7 @@ int RdrNumSceneObjects(Renderer3D* renderer);
 void InitializeRenderer(Renderer3D* renderer, int defSceneObjectCap);
 void InitializeRdrProjection(Renderer3D* renderer, float fNear, float fFar, float fFov, float fAspectRatio);
 
-void RenderScene(Renderer3D* renderer, float elapsed);
+void RenderScene(Renderer3D* renderer);
 
 
 #endif
