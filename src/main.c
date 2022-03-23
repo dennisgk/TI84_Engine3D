@@ -42,7 +42,7 @@ int main(void)
 
     //CREATE AND INITIALIZE THE RENDERER
     Renderer3D rdr = {0};
-    InitializeRenderer(&rdr, 5);
+    InitializeRenderer(&rdr, 5, 1.0f);
     InitializeRdrProjection(&rdr, 0.2f, 1000.0f, 75.0f, (fLCD_HEIGHT / fLCD_WIDTH));
 
     //CREATE AND INITIALIZE A TEST CUBE

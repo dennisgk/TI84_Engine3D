@@ -153,7 +153,8 @@ int RdrNumSceneLights(Renderer3D* renderer){
     return numLights;
 }
 
-void InitializeRenderer(Renderer3D* renderer, int defSceneObjectCap){
+void InitializeRenderer(Renderer3D* renderer, int defSceneObjectCap, float forwardPlaneOffset){
+    renderer->forwardPlaneOffset = forwardPlaneOffset;
     renderer->sceneObjectCapacity = 0;
     renderer->sceneLightCapacity = 0;
     renderer->drawableTrianglesCapacity = 0;
@@ -177,15 +178,27 @@ void InitializeRenderer(Renderer3D* renderer, int defSceneObjectCap){
     VectorInverse(&renderer->vCameraPosition, &renderer->vCameraPositionInverse);
     QuaternionInverse(&renderer->vCameraRotation, &renderer->vCameraRotationInverse);
 
+    Vec3d forwardTmp = {0};
+    MultiplyVectorByScalar(&renderer->vCameraForward, renderer->forwardPlaneOffset, &forwardTmp);
+    AddVectors(&renderer->vCameraPosition, &forwardTmp, &renderer->vCameraRenderPlane);
+
 }
 
 void UpdateRendererPosition(Renderer3D* renderer){
     VectorInverse(&renderer->vCameraPosition, &renderer->vCameraPositionInverse);
+
+    Vec3d forwardTmp = {0};
+    MultiplyVectorByScalar(&renderer->vCameraForward, renderer->forwardPlaneOffset, &forwardTmp);
+    AddVectors(&renderer->vCameraPosition, &forwardTmp, &renderer->vCameraRenderPlane);
 }
 
 void UpdateRendererRotation(Renderer3D* renderer){
     QuaternionInverse(&renderer->vCameraRotation, &renderer->vCameraRotationInverse);
     RotateVectorByQuaternion(&forwardDir, &renderer->vCameraRotation, &renderer->vCameraForward);
+
+    Vec3d forwardTmp = {0};
+    MultiplyVectorByScalar(&renderer->vCameraForward, renderer->forwardPlaneOffset, &forwardTmp);
+    AddVectors(&renderer->vCameraPosition, &forwardTmp, &renderer->vCameraRenderPlane);
 }
 
 void InitializeRdrProjection(Renderer3D* renderer, float fNear, float fFar, float fFov, float fAspectRatio){
@@ -233,13 +246,13 @@ void RenderScene(Renderer3D* renderer){
                 if(c0){
                     Vec3d vecDiff = {0};
 
-                    SubtractVectors(&triIntermediate1.p[0], &renderer->vCameraPosition, &vecDiff);
+                    SubtractVectors(&triIntermediate1.p[0], &renderer->vCameraRenderPlane, &vecDiff);
                     bool c1 = VectorDotProduct(&renderer->vCameraForward, &vecDiff) > 0.0f;
 
-                    SubtractVectors(&triIntermediate1.p[1], &renderer->vCameraPosition, &vecDiff);
+                    SubtractVectors(&triIntermediate1.p[1], &renderer->vCameraRenderPlane, &vecDiff);
                     bool c2 = VectorDotProduct(&renderer->vCameraForward, &vecDiff) > 0.0f;
 
-                    SubtractVectors(&triIntermediate1.p[2], &renderer->vCameraPosition, &vecDiff);
+                    SubtractVectors(&triIntermediate1.p[2], &renderer->vCameraRenderPlane, &vecDiff);
                     bool c3 = VectorDotProduct(&renderer->vCameraForward, &vecDiff) > 0.0f;
 
                     if(c1 && c2 && c3){
