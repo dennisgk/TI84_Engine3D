@@ -104,7 +104,7 @@ int main(void)
         if(kb_Data[7] & kb_Up){
             Vec3d intermediate = {0};
             RotateVectorByQuaternion(&forwardDir, &rdr.vCameraRotation, &intermediate);
-            MultiplyVectorByScalar(&intermediate, 3.0f * delta, &intermediate);
+            MultiplyVectorByScalar(&intermediate, 7.0f * delta, &intermediate);
             AddVectors(&rdr.vCameraPosition, &intermediate, &rdr.vCameraPosition);
             positionUpdated = true;
         }
@@ -112,7 +112,7 @@ int main(void)
             
             Vec3d intermediate = {0};
             RotateVectorByQuaternion(&forwardDir, &rdr.vCameraRotation, &intermediate);
-            MultiplyVectorByScalar(&intermediate, -3.0f * delta, &intermediate);
+            MultiplyVectorByScalar(&intermediate, -7.0f * delta, &intermediate);
             AddVectors(&rdr.vCameraPosition, &intermediate, &rdr.vCameraPosition);
             positionUpdated = true;
         }
