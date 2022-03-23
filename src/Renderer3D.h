@@ -20,10 +20,13 @@ typedef struct{
     int sceneLightCapacity;
     int drawableTrianglesCapacity;
 
+    float forwardPlaneOffset;
+
     Vec3d vCameraPosition;
     Quaternion vCameraRotation;
     //DO NOT MESS WITH
     Vec3d vCameraForward;
+    Vec3d vCameraRenderPlane;
     Vec3d vCameraPositionInverse;
     Quaternion vCameraRotationInverse;
 
@@ -48,7 +51,7 @@ void AddUMLightToScene(Renderer3D* renderer, Light* light);
 int RdrNumSceneLights(Renderer3D* renderer);
 int RdrNumSceneObjects(Renderer3D* renderer);
 
-void InitializeRenderer(Renderer3D* renderer, int defSceneObjectCap);
+void InitializeRenderer(Renderer3D* renderer, int defSceneObjectCap, float forwardPlaneOffset);
 void InitializeRdrProjection(Renderer3D* renderer, float fNear, float fFar, float fFov, float fAspectRatio);
 
 void RenderScene(Renderer3D* renderer);
