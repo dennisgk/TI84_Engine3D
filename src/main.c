@@ -72,6 +72,7 @@ int main(void)
     float delta = 0.0f;
     float elapsedTime = 0.0f;
 
+    //FOR UPDATING ROT POS LATER
     bool positionUpdated = false;
     bool rotationUpdated = false;
 
